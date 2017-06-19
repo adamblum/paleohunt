@@ -1,0 +1,204 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title>Paleo Hunt</title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<link rel="apple-touch-icon" href="apple-touch-icon.png">
+		<!-- Place favicon.ico in the root directory -->
+
+		<link rel="stylesheet" href="css/normalize.css">
+		<link rel="stylesheet" href="css/main.css">
+		<script src="js/vendor/modernizr-2.8.3.min.js"></script>
+		<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+		<script src="js/plugins.js"></script>
+		<script src="js/main.js"></script>
+</head>
+
+<body>
+		<!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+		<!-- Add your site or application content here -->
+		<p>
+			
+				
+		<h2>Megafauna</h2>
+		<form id="positions">
+			<tr>
+				<td>Auroch</td>
+				<td><img id="0_image" width="50" height="50" src="https://www.wpclipart.com/animals/extinct/mammal/mammals_A_to_D/Auroch.png" alt="0"/></td>
+				<td><select id="0"></select></td>
+			</tr>
+			<tr>
+				<td>SaberTooth Tiger</td>
+				<td><img id="1_image" width="50" height="50" src="https://s-media-cache-ak0.pinimg.com/originals/cc/36/e6/cc36e6303fc74274db5343fdd81f2e6b.jpg"/>				<td><select id="1"></select></td>
+			</tr>
+			<tr>
+				<td>Glyptodon</td>
+				<td><img id="2_image" width="50" height="50" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Glyptodon_%28Riha2000%29.jpg/220px-Glyptodon_%28Riha2000%29.jpg" alt="2"/></td>
+				<td><select id="2"></select></td>
+
+			</tr>
+			<tr>
+				<td>Mastodon</td>
+				<td><img id="3_image" width="50" height="50" src="http://www.d20pfsrd.com//wp-content/uploads/sites/12/2017/01/Knight_Mastodon.jpg" alt="3"/></td>
+				<td> <select id="3"></select>></td>
+			</tr>
+			<tr>
+				<td>Ground Sloth</td>
+				<td><img id="4_image" width="50" height="50" src="https://s-media-cache-ak0.pinimg.com/736x/b7/7c/34/b77c349873beb902025b65e695abc085.jpg" alt="4"/>
+				<td><select id="4"></select></td>
+			</tr>
+			<tr>
+				<td>Woolly Rhino</td>
+				<td><img id="5_image" width="50" height="50" src="http://www.extinctanimals.org/wp-content/uploads/2015/06/Woolly-Rhino.jpg" alt="5"/></td>
+				<td><select id="5"></select></td>
+			</tr>
+			<tr>
+				<td>Entelodont</td>
+				<td><img id="6_image" width="50" height="50" src="https://media1.britannica.com/eb-media/16/143216-004-BBE56553.jpg" alt="6"/></td>
+				<td><select id="6"></select></td>
+			</tr>
+			<tr>
+				<td>Indricotheriinae</td>
+				<td>
+					<img id="7_image" width="50" height="50" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Indricotherium11.jpg/600px-Indricotherium11.jpg" alt="7"/>
+				</td>
+				<td><select id="7"></select></td>
+
+			</tr>
+		</form>
+	<h1>Board</h1>
+				<script src="hexagon.js"></script>
+
+				<canvas id="HexCanvas" width="1000" height="700"></canvas>
+
+				<script>
+					
+					function getRandomArbitrary(min, max) {
+  					return Math.floor(Math.random() * (max - min)) + min;
+					}
+					
+					function initHexes() {
+						return [[3,0],[1,1],[2,1],[3,1],[4,1],[5,1],[1,2],[2,2],[3,2],[4,2],[5,2],[3,4],[1,3],[2,3],[3,3],[4,3],[5,3],[2,4],[4,4]];
+					}
+					
+					function drawBoard(hexes,forests,mountains,images,hexCharacters) {
+							hexagonGrid.drawHexBoard(hexes,50,50,"#0f0",true);
+							for (var i = 0; i < forests.length; i++) {
+								hexagonGrid.drawHexAtColRow(hexes[forests[i]][0], hexes[forests[i]][1], "#006400");
+							}
+							for (var i = 0; i < mountains.length; i++) {
+								hexagonGrid.drawHexAtColRow(hexes[mountains[i]][0], hexes[mountains[i]][1], "#2F4F4F");
+							}		
+							for (var hex=0; hex < hexCharacters.length; hex++){
+								if (hexCharacters[hex].length>0){
+									for (var slot=0;slot<hexCharacters[hex].length;slot++){
+										hexagonGrid.drawImageAtColRow(hexes[hex][0],hexes[hex][1],images[hexCharacters[hex][slot]],slot);
+									}
+								}
+							}
+					 }
+					
+					// add the numbered character to the list of characters 
+					// at the specified hex
+					function addCharacterToHex(hexCharacters,hex,character) {
+						hexCharacters[hex].push(character);
+						hexCharacters[hex]=$.unique(hexCharacters[hex]);
+					}
+						
+					function removeCharacterFromHex(hexCharacters,hex,character) {
+						if ( (hexCharacters.length>0) && ((i=hexCharacters[hex].indexOf(character))>-1) ) {
+							hexCharacters[hex].splice(i,1);
+						}
+					}
+					
+					function define_selector(name,hexes,forests,mountains,characters,images,hexCharacters){			
+						select = document.getElementById(`${name}`);
+						var el = document.createElement("option");
+						el.textContent = "NOT PLACED";
+						el.value = -1;
+						select.appendChild(el);
+						// populate dropdown list items
+						for(var i = 0; i < hexes.length; i++) {
+								var opt = hexes[i];
+								var el = document.createElement("option");
+								el.textContent = i;
+								el.value = i;
+								select.appendChild(el);
+						}	
+
+						$(`#${name}`).change(function(){
+							characterNum=parseInt(name,10); // this is character number from the name of dropdown list
+							if ((characterNum>=0) && ( characters[characterNum]>=0) ) {
+								oldLoc=characters[characterNum]; // this was previous location of that character
+								removeCharacterFromHex(hexCharacters,oldLoc,characterNum);
+						  }
+							// remove the character from the list of characters at that hex location
+							newLoc=$(this).val(); // this is the new location based on dropdown selection
+							characters[characterNum]=newLoc; // keep track of where character has moved to
+							addCharacterToHex(hexCharacters,newLoc,characterNum);
+							
+							drawBoard(hexes,forests,mountains,images,hexCharacters);
+						});
+					}
+					
+						var hexagonGrid = new HexagonGrid("HexCanvas", 50);
+						var boardSize=19;
+						var hexCharacters=[];
+						var hexes=initHexes();// the grid coordinates for the hexes
+						for (i=0;i<hexes.length;i++){
+							hexCharacters.push([]); // empty set of characters in each location to start
+						}
+						// create random forests array
+						numForests=2;
+						var forests=[];
+						numMountains=4;
+						var mountains=[];					
+
+						for (i=0; i<numForests; i++){
+							hex=getRandomArbitrary(0,hexes.length);		
+
+							if (forests.indexOf(hex) == -1) {
+							forests.push(hex);
+							} 
+							else {
+							i--; // try again
+							}
+						}
+	
+						for (i=0;i<numMountains;i++){
+							hex=getRandomArbitrary(0,hexes.length);		
+							if ((forests.indexOf(hex)==-1) && (mountains.indexOf(hex)==-1) ) {
+								mountains.push(hex);
+							}
+							else {
+								i--;
+							}
+						}	
+					
+					  var characters=[];
+						var images=[];
+					  numCharacters=8;
+					  for (i=0;i<numCharacters;i++){
+							characters[i]=-1;
+							id=i.toString()+'_image';
+							img=document.getElementById(id);
+							images.push(img.attributes['src'].nodeValue);
+							define_selector(i.toString(),hexes,forests,mountains,characters,images,hexCharacters);
+						}
+
+					  drawBoard(hexes,forests,mountains,images,hexCharacters);
+							
+				</script>
+		</p>
+
+</body>
+
+</html>
